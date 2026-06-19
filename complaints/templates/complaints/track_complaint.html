@@ -1,0 +1,384 @@
+{% extends 'complaints/base.html' %} {% block content %}
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+/>
+
+<style>
+  /* =========================
+   GLOBAL (HIGH CONTRAST FIX)
+========================= */
+  body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: linear-gradient(135deg, #0b1220, #0f172a, #111827);
+    color: #f9fafb;
+  }
+
+  /* =========================
+   WRAPPER
+========================= */
+  .track-wrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+
+  /* =========================
+   CARD
+========================= */
+  .card {
+    width: 100%;
+    max-width: 850px;
+    padding: 42px;
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 35px 120px rgba(0, 0, 0, 0.75);
+    animation: fadeUp 0.7s ease;
+  }
+
+  /* ENTRY ANIMATION */
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(25px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* =========================
+   HEADER ICON
+========================= */
+  .icon {
+    width: 75px;
+    height: 75px;
+    margin: auto;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #3b82f6, #22c55e);
+    font-size: 30px;
+    box-shadow: 0 0 35px rgba(59, 130, 246, 0.5);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+    }
+    100% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+    }
+  }
+
+  /* =========================
+   TEXT FIX (IMPORTANT)
+========================= */
+  h2 {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-top: 15px;
+  }
+
+  p {
+    text-align: center;
+    color: #d1d5db; /* FIXED visibility */
+  }
+
+  /* =========================
+   INPUT
+========================= */
+  input {
+    width: 100%;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: #ffffff;
+    font-size: 15px;
+    margin-top: 20px;
+    outline: none;
+    transition: 0.3s;
+  }
+
+  input::placeholder {
+    color: #9ca3af;
+  }
+
+  input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+    transform: scale(1.01);
+  }
+
+  /* =========================
+   BUTTON
+========================= */
+  button {
+    width: 100%;
+    margin-top: 12px;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #3b82f6, #22c55e);
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 15px 35px rgba(59, 130, 246, 0.3);
+  }
+
+  /* =========================
+   INFO BOX
+========================= */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 25px;
+  }
+
+  .box {
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .label {
+    font-size: 12px;
+    color: #cbd5e1; /* FIX */
+  }
+
+  .value {
+    font-weight: 600;
+    color: #ffffff; /* FIX */
+  }
+
+  /* =========================
+   BADGE
+========================= */
+  .badge {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .pending {
+    background: #ef4444;
+  }
+  .progress {
+    background: #f59e0b;
+  }
+  .resolved {
+    background: #22c55e;
+  }
+
+  /* =========================
+   TIMELINE (ANIMATED)
+========================= */
+  .timeline {
+    margin-top: 30px;
+    border-left: 2px solid #1f2937;
+    padding-left: 22px;
+  }
+
+  .event {
+    margin-bottom: 22px;
+    position: relative;
+    animation: slideIn 0.6s ease;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateX(-15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* DOT */
+  .event::before {
+    content: "";
+    position: absolute;
+    left: -29px;
+    top: 5px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3b82f6;
+    box-shadow: 0 0 10px #3b82f6;
+    animation: glow 2s infinite;
+  }
+
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 5px #3b82f6;
+    }
+    50% {
+      box-shadow: 0 0 15px #3b82f6;
+    }
+    100% {
+      box-shadow: 0 0 5px #3b82f6;
+    }
+  }
+
+  .done::before {
+    background: #22c55e;
+    box-shadow: 0 0 10px #22c55e;
+  }
+
+  .pending::before {
+    background: #f59e0b;
+    box-shadow: 0 0 10px #f59e0b;
+  }
+
+  /* TEXT INSIDE TIMELINE */
+  .time {
+    font-size: 11px;
+    color: #9ca3af;
+  }
+
+  .title {
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .desc {
+    font-size: 13px;
+    color: #cbd5e1;
+  }
+
+  /* ERROR */
+  .error {
+    color: #fca5a5;
+    text-align: center;
+    margin-top: 15px;
+  }
+</style>
+
+<div class="track-wrapper">
+  <div class="card">
+    <div class="icon">
+      <i class="bi bi-activity"></i>
+    </div>
+
+    <h2>Complaint Tracking System</h2>
+    <p>Live timeline & status monitoring</p>
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="text" name="complaint_id" placeholder="Enter Complaint ID" />
+      <button>Track Complaint</button>
+    </form>
+
+    {% if complaint %}
+
+    <div class="grid">
+      <div class="box">
+        <div class="label">Complaint ID</div>
+        <div class="value">{{ complaint.complaint_id }}</div>
+      </div>
+
+      <div class="box">
+        <div class="label">Status</div>
+        <div class="value">
+          {% if complaint.status == "Pending" %}
+          <span class="badge pending">Pending</span>
+          {% elif complaint.status == "In Progress" %}
+          <span class="badge progress">In Progress</span>
+          {% else %}
+          <span class="badge resolved">Resolved</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="label">Category</div>
+        <div class="value">{{ complaint.category }}</div>
+      </div>
+
+      <div class="box">
+        <div class="label">Assigned To</div>
+        <div class="value">
+          {{ complaint.assigned_to|default:"Not Assigned" }}
+        </div>
+      </div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline">
+      <div class="event done">
+        <div class="time">{{ complaint.created_at }}</div>
+        <div class="title">Complaint Created</div>
+        <div class="desc">User submitted complaint</div>
+      </div>
+
+      <div
+        class="event {% if complaint.assigned_to %}done{% else %}pending{% endif %}"
+      >
+        <div class="time">{{ complaint.assigned_at|default:"--" }}</div>
+        <div class="title">Assigned</div>
+        <div class="desc">Sent to department</div>
+      </div>
+
+      <div
+        class="event {% if complaint.status == 'In Progress' %}done{% elif complaint.status == 'Resolved' %}done{% else %}pending{% endif %}"
+      >
+        <div class="time">{{ complaint.updated_at|default:"--" }}</div>
+        <div class="title">Processing</div>
+        <div class="desc">Work in progress</div>
+      </div>
+
+      <div
+        class="event {% if complaint.status == 'Resolved' %}done{% else %}pending{% endif %}"
+      >
+        <div class="time">{{ complaint.resolved_at|default:"--" }}</div>
+        <div class="title">Resolved</div>
+        <div class="desc">Issue closed successfully</div>
+      </div>
+    </div>
+
+    {% endif %} {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

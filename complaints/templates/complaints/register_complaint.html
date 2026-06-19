@@ -1,0 +1,678 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>College Complaint Portal</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* =======================
+   BASE
+======================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(59,130,246,0.18), transparent 40%),
+        radial-gradient(circle at 90% 90%, rgba(124,58,237,0.18), transparent 40%),
+        #0b1220;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px 15px;
+    color:white;
+}
+
+/* =======================
+   CONTAINER (SaaS CARD)
+======================= */
+.container{
+    width:100%;
+    max-width:1100px;
+    background:rgba(255,255,255,0.04);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:26px;
+    padding:40px;
+    box-shadow:0 25px 80px rgba(0,0,0,0.5);
+}
+
+/* =======================
+   TOP HEADER
+======================= */
+.top-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:35px;
+}
+
+.top-bar h1{
+    font-size:30px;
+    font-weight:700;
+    background:linear-gradient(90deg,#60a5fa,#a78bfa);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
+}
+
+.top-bar p{
+    color:#cbd5e1;
+    font-size:14px;
+}
+
+/* =======================
+   CARDS
+======================= */
+.card{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    border-radius:20px;
+    padding:24px;
+    margin-bottom:22px;
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-3px);
+    border-color:rgba(99,102,241,0.4);
+}
+
+/* =======================
+   SECTION TITLE
+======================= */
+.section-title{
+    font-size:16px;
+    font-weight:600;
+    color:#93c5fd;
+    margin-bottom:16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.section-title::before{
+    content:"";
+    width:4px;
+    height:18px;
+    background:linear-gradient(#3b82f6,#8b5cf6);
+    border-radius:10px;
+}
+
+/* =======================
+   GRID
+======================= */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:18px;
+}
+
+/* =======================
+   INPUTS
+======================= */
+label{
+    font-size:13px;
+    color:#cbd5e1;
+    margin-bottom:6px;
+}
+
+.input-group{
+    display:flex;
+    flex-direction:column;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    padding:13px 14px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(15,23,42,0.6);
+    color:white;
+    font-size:14px;
+    outline:none;
+    transition:0.25s;
+}
+
+textarea{
+    min-height:130px;
+    resize:none;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:#6366f1;
+    box-shadow:0 0 0 4px rgba(99,102,241,0.15);
+    transform:translateY(-1px);
+}
+
+/* =======================
+   ANONYMOUS BOX
+======================= */
+.mode-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:14px;
+    border-radius:14px;
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+}
+
+.mode-box input{
+    width:18px;
+    height:18px;
+    accent-color:#6366f1;
+}
+
+/* =======================
+   BUTTON (SAAS STYLE)
+======================= */
+.btn{
+    width:100%;
+    margin-top:30px;
+    padding:15px;
+    border:none;
+    border-radius:16px;
+    font-size:15px;
+    font-weight:600;
+    color:white;
+    cursor:pointer;
+    background:linear-gradient(90deg,#6366f1,#8b5cf6);
+    transition:0.3s;
+    letter-spacing:0.3px;
+}
+
+.btn:hover{
+    transform:translateY(-3px);
+    box-shadow:0 18px 40px rgba(99,102,241,0.35);
+}
+.btn-wrapper{
+    display:flex;
+    justify-content:center;
+    margin-top:20px;
+}
+
+.btn{
+    width:320px;   /* fixed professional SaaS width */
+    max-width:100%;
+}
+
+/* =======================
+   FULL WIDTH
+======================= */
+.full{
+    grid-column:1/-1;
+}
+
+/* =======================
+   RESPONSIVE
+======================= */
+@media(max-width:768px){
+    .container{
+        padding:22px;
+    }
+
+    .top-bar h1{
+        font-size:22px;
+    }
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- TOP -->
+    <div class="top-bar">
+        <h1>College Complaint Portal</h1>
+
+        {% if user.is_authenticated %}
+        <p>Welcome, <strong>{{ user.username }}</strong></p>
+        {% endif %}
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+     <input type="hidden" name="is_anonymous" id="is_anonymous_hidden">
+
+       
+        <div class="card">
+
+            <div class="section-title">Submission Mode</div>
+
+            <div class="mode-box">
+                <input type="checkbox" id="anonymousToggle">
+                <label for="anonymousToggle">
+                    Submit Complaint Anonymously
+                </label>
+            </div>
+
+        </div> 
+
+        <!-- PERSONAL -->
+        <div class="card" id="personalSection">
+        
+            <div class="section-title">
+                Personal Information
+            </div>
+        
+            <div class="grid">
+        
+                <!-- First Name -->
+
+                <div class="input-group">
+                
+                <label>First Name</label>
+                
+                <input
+                    type="text"
+                    name="first_name"
+                    required
+                    placeholder="Enter first name"
+                    value="{{ form.first_name.value|default:'' }}"
+                >
+                
+                </div>
+                
+                
+                <!-- Last Name -->
+                
+                <div class="input-group">
+                
+                <label>Last Name</label>
+                
+                <input
+                    type="text"
+                    name="last_name"
+                    placeholder="Enter last name"
+                    value="{{ form.last_name.value|default:'' }}"
+                >
+                
+                </div>
+        
+                <!-- Email -->
+        
+                <div class="input-group">
+        
+                    <label>Email Address</label>
+        
+                    <input
+                        type="email"
+                        name="email"
+                        required
+                        placeholder="Enter your email"
+                        value="{{ form.email.value|default:'' }}"
+                    >
+        
+                </div>
+        
+                <!-- Role -->
+        
+                <div class="input-group">
+        
+                    <label>Role</label>
+        
+                    <select
+                        disabled
+                        required
+                    >
+        
+                        <option value="">
+                            Select Role
+                        </option>
+        
+                        <option
+                        value="Student"
+                        {% if form.role.value == "Student" %}
+                        selected
+                        {% endif %}
+                        >
+                        Student
+                        </option>
+        
+                        <option
+                        value="Teacher"
+                        {% if form.role.value == "Teacher" %}
+                        selected
+                        {% endif %}
+                        >
+                        Teacher
+                        </option>
+        
+                        <option
+                        value="Staff"
+                        {% if form.role.value == "Staff" %}
+                        selected
+                        {% endif %}
+                        >
+                        Staff
+                        </option>
+        
+                    </select>
+        
+                    <!-- Disabled select submit nahi hota -->
+        
+                    <input
+                        type="hidden"
+                        name="role"
+                        value="{{ form.role.value|default:'' }}"
+                    >
+        
+                </div>
+        
+                <!-- Department -->
+        
+                <div class="input-group">
+        
+                    <label>Department</label>
+        
+                    <select
+                        id="department"
+                        name="department"
+                        required
+                    >
+        
+                        <option value="">
+                            Select Department
+                        </option>
+        
+                        {% for d in departments %}
+        
+                        <option
+                            value="{{ d.id }}"
+        
+                            {% if form.department.value|stringformat:"s" == d.id|stringformat:"s" %}
+                            selected
+                            {% endif %}
+                        >
+        
+                            {{ d.name|cut:"_head"|cut:"_"|title }}
+        
+                        </option>
+        
+                        {% endfor %}
+        
+                    </select>
+        
+                </div>
+        
+                <!-- Phone -->
+        
+                <div class="input-group">
+        
+                    <label>Phone Number</label>
+        
+                    <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Optional"
+                        value="{{ form.phone.value|default:'' }}"
+                    >
+                </div>    
+            </div>
+        
+        </div>
+        <!-- COMPLAINT -->
+        <div class="card">
+
+            <div class="section-title">
+                Complaint Details
+            </div>
+
+
+                <div class="input-group">
+                    <label>Category</label>
+
+                    <select id="category" name="category" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+
+                    <label>Sub Category</label>
+
+                    <select id="subcategory" name="subcategory" required>
+                        <option value="">Select Sub Category</option>
+                    </select>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>Priority</label>
+
+                    <select name="priority" required>
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                        <option value="EMERGENCY">Emergency</option>
+                    </select>
+                </div>
+
+                <div class="input-group full">
+
+                    <label>Description</label>
+
+                    <textarea
+                    name="description"
+                    required
+                    placeholder="Write your complaint in detail..."
+                    ></textarea>
+
+                </div>
+
+                <div class="input-group full">
+
+                    <label>Attachment</label>
+
+                    <input type="file" name="attachment">
+
+                </div>
+
+            </div>
+
+        <div class="btn-wrapper">
+    <button type="submit" class="btn">
+        Submit Complaint
+    </button>
+</div>
+
+    </form>
+
+</div>
+
+<!-- JQUERY -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const dept = document.getElementById("department");
+    const cat = document.getElementById("category");
+    const sub = document.getElementById("subcategory");
+
+    // AUTO LOAD CATEGORY IF DEPARTMENT ALREADY SELECTED
+
+if(dept.value){
+
+    fetch(`/get-categories/${dept.value}/`)
+    .then(res => res.json())
+    .then(data => {
+
+        cat.innerHTML =
+        "<option value=''>Select Category</option>";
+
+        data.forEach(item => {
+
+            cat.innerHTML += `
+            <option value="${item.id}">
+                ${item.name}
+            </option>`;
+
+        });
+
+    });
+
+}
+
+    // Anonymous Toggle FIX
+
+    const toggle =
+    document.getElementById(
+    "anonymousToggle"
+    );
+    
+    const hidden =
+    document.getElementById(
+    "is_anonymous_hidden"
+    );
+    
+    toggle.addEventListener(
+    "change",
+    function(){
+    
+    hidden.value=
+    
+    this.checked
+    
+    ?
+    
+    "true"
+    
+    :
+    
+    "false";
+    
+    const fields=[
+
+    document.querySelector(
+    'input[name="first_name"]'
+    ),
+    
+    document.querySelector(
+    'input[name="last_name"]'
+    ),
+    
+    document.querySelector(
+    'input[name="email"]'
+    ),
+    
+    document.querySelector(
+    'input[name="phone"]'
+    )
+    ];
+    
+    fields.forEach(field=>{
+    
+    if(!field)return;
+    
+    const box=
+    
+    field.closest(
+    ".input-group"
+    );
+    
+    box.style.display=
+    
+    this.checked
+    
+    ?
+    
+    "none"
+    
+    :
+    
+    "flex";
+    
+    });
+    
+    }
+    );
+
+    // Department → Category
+
+    dept.addEventListener("change", function () {
+
+        let deptId = this.value;
+
+        cat.innerHTML = "<option>Loading...</option>";
+
+        fetch(`/complaints/get-categories/${deptId}/`)
+        .then(res => res.json())
+        .then(data => {
+
+            cat.innerHTML = "<option value=''>Select Category</option>";
+
+            data.forEach(item => {
+
+                cat.innerHTML += `
+                <option value="${item.id}">
+                    ${item.name}
+                </option>`;
+
+            });
+
+            sub.innerHTML =
+            "<option value=''>Select Sub Category</option>";
+
+        });
+
+    });
+
+    // Category → SubCategory
+
+    cat.addEventListener("change", function () {
+
+        let catId = this.value;
+
+        sub.innerHTML = "<option>Loading...</option>";
+
+        fetch(`/complaints/get-subcategories/${catId}/`)
+        .then(res => res.json())
+        .then(data => {
+
+            sub.innerHTML =
+            "<option value=''>Select Sub Category</option>";
+
+            data.forEach(item => {
+
+                sub.innerHTML += `
+                <option value="${item.id}">
+                    ${item.name}
+                </option>`;
+
+            });
+
+        });
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

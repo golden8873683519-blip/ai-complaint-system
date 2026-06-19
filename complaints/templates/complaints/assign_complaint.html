@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Assign Complaint</title>
+  </head>
+  <body>
+    <h2>Assign Complaint</h2>
+
+    <h3>{{ complaint.title }}</h3>
+
+    <form method="POST" action="{% url 'assign_complaint' c.id %}">
+      {% csrf_token %}
+
+      <select name="assigned_to" required>
+        {% for d in department_heads %}
+        <option value="{{ d.id }}">{{ d.username }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit">Assign</button>
+    </form>
+  </body>
+</html>

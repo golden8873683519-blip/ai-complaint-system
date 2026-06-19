@@ -1,0 +1,409 @@
+{% extends 'complaints/base.html' %} {% block content %}
+
+<style>
+  /* =========================
+   GLOBAL FIX (READABILITY)
+========================= */
+  body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: linear-gradient(135deg, #0b1220, #0f172a, #111827);
+    color: #f9fafb;
+  }
+
+  /* =========================
+   WRAPPER
+========================= */
+  .detail-wrapper {
+    max-width: 1150px;
+    margin: auto;
+    padding: 25px;
+  }
+
+  /* =========================
+   MAIN CARD (IMPROVED VISIBILITY)
+========================= */
+  .complaint-card {
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(30px);
+    border-radius: 28px;
+    padding: 32px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.75);
+    position: relative;
+    overflow: hidden;
+    color: #f8fafc;
+  }
+
+  /* soft glow */
+  .complaint-card::before,
+  .complaint-card::after {
+    content: "";
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    filter: blur(60px);
+    z-index: 0;
+  }
+
+  .complaint-card::before {
+    top: -120px;
+    right: -120px;
+    background: rgba(59, 130, 246, 0.18);
+  }
+
+  .complaint-card::after {
+    bottom: -120px;
+    left: -120px;
+    background: rgba(34, 197, 94, 0.12);
+  }
+
+  /* bring content above glow */
+  .complaint-card > * {
+    position: relative;
+    z-index: 2;
+  }
+
+  /* =========================
+   HEADER
+========================= */
+  .complaint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .complaint-title {
+    font-size: 28px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .complaint-subtitle {
+    margin-top: 6px;
+    color: #cbd5e1;
+    font-size: 13px;
+  }
+
+  /* STATUS BADGE */
+  .badge-status {
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #3b82f6, #22c55e);
+    color: white;
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
+  }
+
+  /* =========================
+   GRID
+========================= */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .info-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 18px;
+    transition: 0.3s;
+  }
+
+  .info-box:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .info-title {
+    font-size: 12px;
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .info-value {
+    margin-top: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  /* =========================
+   DESCRIPTION
+========================= */
+  .description-box {
+    margin-top: 22px;
+    padding: 22px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .section-heading {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #ffffff;
+  }
+
+  .description-box p {
+    color: #cbd5e1;
+    line-height: 1.8;
+    font-size: 14px;
+  }
+
+  /* =========================
+   TIMELINE (ULTRA CLEAN)
+========================= */
+  .timeline-wrapper {
+    margin-top: 25px;
+    padding: 25px;
+    border-radius: 22px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .timeline-title {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: #ffffff;
+  }
+
+  /* vertical line */
+  .timeline {
+    position: relative;
+    padding-left: 30px;
+  }
+
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: rgba(148, 163, 184, 0.3);
+  }
+
+  /* ITEM */
+  .timeline-item {
+    position: relative;
+    margin-bottom: 22px;
+    padding-left: 10px;
+    animation: fadeInUp 0.5s ease;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* DOT */
+  .timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -18px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3b82f6;
+    box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+  }
+
+  .timeline-item.resolved::before {
+    background: #22c55e;
+    box-shadow: 0 0 10px rgba(34, 197, 94, 0.6);
+  }
+
+  .timeline-item.warning::before {
+    background: #f59e0b;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+  }
+
+  /* TEXT */
+  .timeline-content strong {
+    display: block;
+    color: #ffffff;
+    font-size: 15px;
+  }
+
+  .timeline-content small {
+    color: #cbd5e1;
+    font-size: 12px;
+  }
+
+  /* =========================
+   MOBILE
+========================= */
+  @media (max-width: 768px) {
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .complaint-title {
+      font-size: 22px;
+    }
+
+    .complaint-header {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<div class="detail-wrapper">
+  <div class="complaint-card">
+    <!-- HEADER -->
+    <div class="complaint-header">
+      <div>
+        <div class="complaint-title">{{ complaint.title }}</div>
+
+        <div class="complaint-subtitle">ID #{{ complaint.complaint_id }}</div>
+      </div>
+
+      <div class="badge-status">{{ complaint.status }}</div>
+    </div>
+
+    <!-- GRID -->
+    <div class="info-grid">
+      <div class="info-box">
+        <div class="info-title">Submitted By</div>
+        <div class="info-value">
+          {% if complaint.user %} {{ complaint.user.username }} {% else %}
+          Anonymous {% endif %}
+        </div>
+      </div>
+
+      <div class="info-box">
+        <div class="info-title">Category</div>
+        <div class="info-value">{{ complaint.category }}</div>
+      </div>
+
+      <div class="info-box">
+        <div class="info-title">Department</div>
+        <div class="info-value">{{ complaint.department }}</div>
+      </div>
+
+      <div class="info-box">
+        <div class="info-title">Assigned To</div>
+        <div class="info-value">
+          {{ complaint.assigned_to|default:"Not Assigned" }}
+        </div>
+      </div>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="description-box">
+      <div class="section-heading">Complaint Description</div>
+      <p>{{ complaint.description }}</p>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="timeline-wrapper">
+      <div class="timeline-title">Complaint Timeline</div>
+
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-content">
+            <strong>Complaint Created</strong>
+            <small>{{ complaint.created_at|date:"d M Y, h:i A" }}</small>
+          </div>
+        </div>
+
+        {% if complaint.assigned_at %}
+      <div class="timeline-item warning">
+          <div class="timeline-content">
+              <strong>Assigned to Department</strong>
+              <small>{{ complaint.assigned_at|date:"d M Y, h:i A" }}</small>
+          </div>
+      </div>
+      {% endif %}
+
+      {% if complaint.status == "In Progress" or complaint.status == "Resolved" %}
+      <div class="timeline-item warning">
+          <div class="timeline-content">
+              <strong>Work in Progress</strong>
+              <small>{{ complaint.updated_at|date:"d M Y, h:i A" }}</small>
+          </div>
+      </div>
+      {% endif %}
+
+      {% if complaint.status == "Resolved" %}
+      <div class="timeline-item resolved">
+          <div class="timeline-content">
+              <strong>Complaint Resolved</strong>
+              <small>{{ complaint.updated_at|date:"d M Y, h:i A" }}</small>
+          </div>
+      </div>
+      {% endif %}      
+    </div>
+    </div>
+    {% if feedback %}
+
+    <div class="description-box" style="margin-top: 25px">
+      <div class="section-heading">⭐ User Feedback</div>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <div class="info-title">Rating</div>
+          <div class="info-value">⭐ {{ feedback.rating }}/5</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">Satisfaction</div>
+          <div class="info-value">{{ feedback.satisfaction }}/5</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">Resolution Speed</div>
+          <div class="info-value">{{ feedback.resolution_speed }}/5</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-title">Submitted By</div>
+          <div class="info-value">{{ feedback.user.username }}</div>
+        </div>
+      </div>
+
+      {% if feedback.comment %}
+      <div
+        style="
+          margin-top: 20px;
+          padding: 20px;
+          border-radius: 18px;
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+        "
+      >
+        <div class="info-title">User Comment</div>
+
+        <div style="margin-top: 10px; color: #e2e8f0; line-height: 1.8">
+          "{{ feedback.comment }}"
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

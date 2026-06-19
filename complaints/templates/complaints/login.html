@@ -1,0 +1,374 @@
+{% extends 'complaints/base.html' %} {% block content %}
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+/>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: "Poppins", sans-serif;
+    min-height: 100vh;
+    overflow: hidden;
+    background:
+      linear-gradient(rgba(15, 23, 42, 0.82), rgba(15, 23, 42, 0.86)),
+      url("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070&auto=format&fit=crop");
+
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  /* =========================
+   BACKGROUND EFFECT
+========================= */
+
+  .blur1 {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: #2563eb;
+    filter: blur(160px);
+    opacity: 0.3;
+    top: -140px;
+    left: -120px;
+  }
+
+  .blur2 {
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    border-radius: 50%;
+    background: #06b6d4;
+    filter: blur(160px);
+    opacity: 0.22;
+    bottom: -130px;
+    right: -120px;
+  }
+
+  /* =========================
+   LOGIN CONTAINER
+========================= */
+
+  .login-container {
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+    z-index: 10;
+    padding: 20px;
+  }
+
+  /* =========================
+   LOGIN CARD
+========================= */
+
+  .login-card {
+    background: rgba(30, 41, 59, 0.72);
+    backdrop-filter: blur(22px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 38px;
+    overflow: hidden;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+    animation: fadeIn 0.8s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* =========================
+   TOP BAR
+========================= */
+
+  .top-bar {
+    background: linear-gradient(135deg, #2563eb, #4f8dfd);
+    padding: 45px 30px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .top-bar::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    top: -60px;
+    right: -60px;
+  }
+
+  .top-bar h1 {
+    color: white;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.2;
+    position: relative;
+    z-index: 2;
+  }
+
+  .top-bar p {
+    color: #e2e8f0;
+    margin-top: 10px;
+    font-size: 15px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* =========================
+   FORM BODY
+========================= */
+
+  .form-body {
+    padding: 42px;
+  }
+
+  /* =========================
+   INPUTS
+========================= */
+
+  .form-group {
+    margin-bottom: 24px;
+  }
+
+  .form-group label {
+    display: block;
+    color: white;
+    margin-bottom: 10px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .input-box {
+    position: relative;
+  }
+
+  .input-box input {
+    width: 100%;
+    height: 64px;
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0 58px 0 20px;
+    color: white;
+    font-size: 16px;
+    transition: 0.3s;
+  }
+
+  .input-box input::placeholder {
+    color: #cbd5e1;
+  }
+
+  .input-box input:focus {
+    border-color: #60a5fa;
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 5px rgba(96, 165, 250, 0.15);
+  }
+
+  .input-box i {
+    position: absolute;
+    right: 20px;
+    top: 21px;
+    color: #cbd5e1;
+    font-size: 20px;
+  }
+
+  /* =========================
+   OPTIONS
+========================= */
+
+  .options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    font-size: 15px;
+  }
+
+  .options label {
+    color: #e2e8f0;
+  }
+
+  .options a {
+    color: #60a5fa;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .options a:hover {
+    color: white;
+  }
+
+  /* =========================
+   BUTTON
+========================= */
+
+  .login-btn {
+    width: 100%;
+    height: 64px;
+    border: none;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #2563eb, #4f8dfd);
+    color: white;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.35s;
+    box-shadow: 0 15px 35px rgba(37, 99, 235, 0.35);
+  }
+
+  .login-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 45px rgba(37, 99, 235, 0.45);
+  }
+
+  /* =========================
+   ERROR
+========================= */
+
+  .error-box {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #fecaca;
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 22px;
+    font-size: 14px;
+  }
+
+  /* =========================
+   MOBILE
+========================= */
+
+  @media (max-width: 520px) {
+    .top-bar h1 {
+      font-size: 32px;
+    }
+
+    .form-body {
+      padding: 30px 22px;
+    }
+  }
+</style>
+
+<!-- BACKGROUND -->
+
+<div class="blur1"></div>
+<div class="blur2"></div>
+
+<!-- LOGIN -->
+
+<div class="login-container">
+  <div class="login-card">
+    <!-- TOP -->
+
+    <div class="top-bar">
+      <h1>
+        College Complaint
+        <br />
+        System
+      </h1>
+
+      <p>Smart Complaint Management Portal</p>
+    </div>
+
+    <!-- FORM -->
+
+    <div class="form-body">
+      {% if error %}
+
+      <div class="error-box">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+
+        {{ error }}
+      </div>
+
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+
+        <!-- USERNAME -->
+
+        <div class="form-group">
+          <label>Username</label>
+
+          <div class="input-box">
+            <input
+              type="text"
+              name="username"
+              placeholder="Enter your username"
+              required
+            />
+
+            <i class="bi bi-person"></i>
+          </div>
+        </div>
+
+        <!-- PASSWORD -->
+
+        <div class="form-group">
+          <label>Password</label>
+
+          <div class="input-box">
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+
+            <i class="bi bi-lock"></i>
+          </div>
+        </div>
+
+        <!-- OPTIONS -->
+
+        <div class="options">
+          <label>
+            <input type="checkbox" />
+            Remember me
+          </label>
+
+          <a href="{% url 'password_reset' %}"> Forgot Password? </a>
+        </div>
+
+        <!-- BUTTON -->
+
+        <button type="submit" class="login-btn">
+          <i class="bi bi-box-arrow-in-right"></i>
+
+          Login to Dashboard
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

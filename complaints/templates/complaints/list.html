@@ -1,0 +1,82 @@
+{% extends 'complaints/base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<h3 class="mb-4">📋 Complaints List</h3>
+
+{% for c in complaints %}
+
+<div class="card mb-3 p-3 shadow-sm">
+
+    <!-- Title -->
+    <h5 class="mb-2">{{ c.title }}</h5>
+
+    <!-- Description -->
+    <p class="text-muted">{{ c.description }}</p>
+
+    <!-- Status Badge -->
+    {% if c.status == "Pending" %}
+        <span class="badge bg-danger">{{ c.status }}</span>
+
+    {% elif c.status == "In Progress" %}
+        <span class="badge bg-warning text-dark">{{ c.status }}</span>
+
+    {% elif c.status == "Resolved" %}
+        <span class="badge bg-success">{{ c.status }}</span>
+
+    {% elif c.status == "Rejected" %}
+        <span class="badge bg-dark">{{ c.status }}</span>
+
+    {% else %}
+        <span class="badge bg-secondary">{{ c.status }}</span>
+    {% endif %}
+
+    <!-- Extra Info -->
+    <div class="mt-2 small text-muted">
+        👤 User: {{ c.user.username }} |
+        🆔 ID: {{ c.complaint_id }}
+    </div>
+
+    <!-- ADMIN ONLY STATUS UPDATE BUTTONS -->
+    {% if request.user.is_superuser %}
+
+    <hr>
+
+    <div class="mt-2">
+
+        <a href="{% url 'update_status' c.id %}?status=Pending"
+           class="btn btn-sm btn-danger">
+           Pending
+        </a>
+
+        <a href="{% url 'update_status' c.id %}?status=In%20Progress"
+           class="btn btn-sm btn-warning">
+           In Progress
+        </a>
+
+        <a href="{% url 'update_status' c.id %}?status=Resolved"
+           class="btn btn-sm btn-success">
+           Resolved
+        </a>
+
+        <a href="{% url 'update_status' c.id %}?status=Rejected"
+           class="btn btn-sm btn-dark">
+           Rejected
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% empty %}
+<p class="text-center text-muted">No complaints found</p>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

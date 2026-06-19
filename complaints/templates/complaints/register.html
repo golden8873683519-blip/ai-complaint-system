@@ -1,0 +1,779 @@
+{% extends 'complaints/base.html' %} {% block content %}
+
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background: #0b1220;
+    overflow-x: hidden;
+  }
+
+  .bg-glow {
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    filter: blur(140px);
+    opacity: 0.25;
+  }
+
+  .glow1 {
+    background: #3b82f6;
+    top: -150px;
+    left: -120px;
+  }
+
+  .glow2 {
+    background: #22c55e;
+    bottom: -180px;
+    right: -150px;
+  }
+
+  .wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 35px;
+    color: white;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    color: #cbd5e1;
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  .form-group {
+    margin-top: 18px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    color: #cbd5e1;
+    font-size: 13px;
+  }
+
+  input,
+  select {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    outline: none;
+    transition: 0.25s;
+  }
+
+  input:focus,
+  select:focus {
+    border-color: #3b82f6;
+  }
+
+  .btn {
+    width: 100%;
+    margin-top: 25px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .error {
+    background: rgba(239, 68, 68, 0.12);
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 16px;
+  }
+
+  /* LIVE ERROR */
+
+  .live-error {
+    color: #ff6b6b;
+    font-size: 12px;
+    display: block;
+    margin-top: 6px;
+  }
+
+  .input-error {
+    border: 1px solid #ef4444 !important;
+
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.35);
+
+    animation: shake 0.25s;
+  }
+
+  @keyframes shake {
+    0% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-5px);
+    }
+    50% {
+      transform: translateX(5px);
+    }
+    75% {
+      transform: translateX(-5px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  /* PASSWORD BOX */
+
+  .password-box {
+    margin-top: 10px;
+    padding: 12px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .password-box h5 {
+    margin: 0 0 8px;
+  }
+
+  .rule {
+    font-size: 12px;
+    margin: 5px 0;
+    color: #94a3b8;
+  }
+
+  .ok {
+    color: #22c55e;
+  }
+
+  .bad {
+    color: #ef4444;
+  }
+
+  .email-wrapper {
+    position: relative;
+  }
+
+  .email-wrapper input {
+    padding-right: 120px;
+  }
+
+  .verified-badge {
+    position: absolute;
+    right: -95px; /* box ke bahar */
+    top: 50%;
+    transform: translateY(-50%);
+    color: green;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .live-error {
+    color: red;
+    font-size: 12px;
+  }
+
+  /* =========================
+   OTP MODAL
+========================= */
+
+  .otp-overlay {
+    display: none;
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    backdrop-filter: blur(8px);
+
+    justify-content: center;
+
+    align-items: center;
+
+    z-index: 999999;
+  }
+
+  .otp-modal {
+    width: 90%;
+    max-width: 380px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.95);
+    animation: pop 0.25s ease forwards;
+  }
+
+  .otp-header h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .otp-header p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #cbd5e1;
+  }
+
+  .otp-input {
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 6px;
+    outline: none;
+    transition: 0.3s;
+  }
+
+  .otp-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.4);
+  }
+
+  .otp-btn {
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+
+  .otp-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4);
+  }
+
+  .otp-result {
+    margin-top: 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes pop {
+    from {
+      transform: scale(0.85);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+</style>
+
+<div class="bg-glow glow1"></div>
+<div class="bg-glow glow2"></div>
+
+<div class="wrapper">
+  <div class="card">
+    <div class="title">Create Account</div>
+
+    <div class="subtitle">Join Complaint Management System</div>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label>First Name</label>
+
+        {{ form.first_name }}
+      </div>
+
+      <div class="form-group">
+        <label>Last Name</label>
+
+        {{ form.last_name }}
+      </div>
+
+      <div class="form-group">
+        <label>Username</label>
+
+        {{ form.username }}
+
+        <span id="usernameError" class="live-error"> </span>
+      </div>
+
+      <div class="form-group email-wrapper">
+        <label>Email</label>
+        {{form.email}}
+        <span id="emailError" class="live-error"></span>
+
+        {% if user.is_email_verified %}
+        <span id="email-status" class="verified-badge"> ✓ Verified </span>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label>Role</label>
+
+        <select name="role">
+          <option value="student">Student</option>
+
+          <option value="teacher">Teacher</option>
+
+          <option value="staff">Staff</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="departmentBox">
+        <label>Department</label>
+        {{ form.department }}
+      </div>
+
+      <div class="form-group">
+        <label>Mobile</label>
+
+        {{ form.mobile_number }}
+
+        <span id="mobileError" class="live-error"> </span>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+
+        {{ form.password1 }}
+
+        <span id="passwordError" class="live-error"> </span>
+
+        <div class="password-box">
+          <h5>Password Requirements</h5>
+
+          <div id="rule1" class="rule bad">❌ Minimum 8 characters</div>
+
+          <div id="rule2" class="rule bad">❌ Alphabet required</div>
+
+          <div id="rule3" class="rule bad">❌ Number required</div>
+
+          <div id="rule4" class="rule bad">❌ Special character required</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label> Confirm Password </label>
+
+        {{ form.password2 }}
+
+        <span id="confirmError" class="live-error"> </span>
+      </div>
+
+      {% if form.errors %}
+
+      <div class="error">
+        {% for field,errors in form.errors.items %} {% for error in errors %} •
+        {{ error }}
+
+        <br />
+
+        {% endfor %} {% endfor %}
+      </div>
+
+      {% endif %}
+
+      <button class="btn" type="submit">Create Account</button>
+    </form>
+  </div>
+</div>
+
+<div id="otpPopup" class="otp-overlay">
+  <div class="otp-modal">
+    <div class="otp-header">
+      <h2>🔐 Email Verification</h2>
+
+      <p>We've sent a 6-digit OTP to your email</p>
+    </div>
+
+    <input
+      type="text"
+      id="otpInput"
+      placeholder="Enter OTP"
+      maxlength="6"
+      class="otp-input"
+    />
+
+    <button class="otp-btn" type="button" onclick="verifyOTP()">
+      Verify OTP
+    </button>
+
+    <p id="otpResult" class="otp-result"></p>
+
+    <button
+      type="button"
+      id="resendBtn"
+      class="otp-btn"
+      style="margin-top: 10px; background: #475569; display: none"
+      onclick="resendOTP()"
+    >
+      Resend OTP
+    </button>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const username = document.querySelector("input[name='username']");
+
+    const firstName = document.querySelector("input[name='first_name']");
+
+    const lastName = document.querySelector("input[name='last_name']");
+
+    firstName.addEventListener("input", () => {
+      if (firstName.value.trim().length < 2) {
+        showError(firstName, "Minimum 2 characters", "usernameError");
+      } else {
+        showError(firstName, "", "usernameError");
+      }
+    });
+
+    const email = document.querySelector("input[name='email']");
+
+    const mobile = document.querySelector("input[name='mobile_number']");
+
+    const pass1 = document.querySelector("input[name='password1']");
+
+    const pass2 = document.querySelector("input[name='password2']");
+
+    function showError(input, msg, id) {
+      document.getElementById(id).innerText = msg;
+
+      if (msg) {
+        input.classList.add("input-error");
+      } else {
+        input.classList.remove("input-error");
+      }
+    }
+
+    function rule(id, ok) {
+      let x = document.getElementById(id);
+
+      if (ok) {
+        x.classList.add("ok");
+
+        x.classList.remove("bad");
+
+        x.innerHTML = x.innerHTML.replace("❌", "✅");
+      } else {
+        x.classList.add("bad");
+
+        x.classList.remove("ok");
+
+        x.innerHTML = x.innerHTML.replace("✅", "❌");
+      }
+    }
+
+    username.addEventListener("input", () => {
+      if (username.value.length < 3) {
+        showError(username, "Minimum 3 characters", "usernameError");
+      } else {
+        showError(username, "", "usernameError");
+      }
+    });
+
+    pass1.addEventListener("input", () => {
+      let value = pass1.value;
+
+      let len = value.length >= 8;
+
+      let alpha = /[A-Za-z]/.test(value);
+
+      let num = /\d/.test(value);
+
+      let special = /[^A-Za-z0-9]/.test(value);
+
+      rule("rule1", len);
+
+      rule("rule2", alpha);
+
+      rule("rule3", num);
+
+      rule("rule4", special);
+
+      if (!len || !alpha || !num || !special) {
+        showError(pass1, "Password invalid", "passwordError");
+      } else {
+        showError(pass1, "", "passwordError");
+      }
+
+      confirmPass();
+    });
+
+    function confirmPass() {
+      if (pass2.value && pass1.value != pass2.value) {
+        showError(pass2, "Password not matching", "confirmError");
+      } else {
+        showError(pass2, "", "confirmError");
+      }
+    }
+
+    pass2.addEventListener("input", confirmPass);
+
+    function checkUser() {
+      const emailValue = email.value.trim();
+
+      const mobileValue = mobile.value.trim();
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (emailValue && !emailRegex.test(emailValue)) {
+        showError(email, "Invalid email", "emailError");
+
+        return;
+      }
+
+      fetch(
+        `/check-user/?email=${encodeURIComponent(
+          emailValue,
+        )}&mobile=${encodeURIComponent(mobileValue)}`,
+      )
+        .then((res) => res.json())
+
+        .then((data) => {
+          if (data.email_exists) {
+            showError(email, "Email already registered", "emailError");
+          } else {
+            showError(email, "", "emailError");
+          }
+
+          if (data.mobile_exists) {
+            showError(mobile, "Mobile already registered", "mobileError");
+          } else {
+            showError(mobile, "", "mobileError");
+          }
+        });
+    }
+
+    email.addEventListener("blur", checkUser);
+
+    mobile.addEventListener("blur", checkUser);
+  });
+  let userEmail = "";
+  let otpSent = false;
+  let sendingOTP = false;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const emailInput = document.querySelector("input[name='email']");
+
+    if (emailInput) {
+      function triggerOTP() {
+        const email = emailInput.value.trim();
+
+        if (!email || otpSent || sendingOTP) return;
+
+        sendingOTP = true;
+
+        document.getElementById("otpPopup").style.display = "flex";
+
+        sendOTP(email);
+      }
+
+      emailInput.addEventListener("blur", triggerOTP);
+
+      emailInput.addEventListener("keydown", function (e) {
+        if (e.key === "Tab") {
+          triggerOTP();
+        }
+      });
+    }
+    const role = document.querySelector("select[name='role']");
+    const departmentBox = document.getElementById("departmentBox");
+
+    const departmentInput = document.querySelector("input[name='department']");
+
+    function toggleDepartment() {
+      const value = role.value;
+
+      if (value === "teacher" || value === "staff") {
+        departmentBox.style.display = "none";
+
+        // remove required
+        departmentInput.required = false;
+
+        // clear value
+        departmentInput.value = "";
+      } else {
+        departmentBox.style.display = "block";
+
+        // required for student
+        departmentInput.required = true;
+      }
+    }
+
+    // page load
+    toggleDepartment();
+
+    // role change
+    role.addEventListener("change", toggleDepartment);
+  });
+
+  function sendOTP(email) {
+    userEmail = email;
+
+    fetch(`/send-otp/?email=${email}`)
+      .then((res) => res.json())
+
+      .then((data) => {
+        sendingOTP = false;
+
+        if (data.status === "success") {
+          otpSent = true;
+        } else {
+          otpSent = false;
+
+          document.getElementById("otpPopup").style.display = "none";
+        }
+      })
+
+      .catch(() => {
+        sendingOTP = false;
+
+        otpSent = false;
+
+        document.getElementById("otpPopup").style.display = "none";
+      });
+  }
+
+  function verifyOTP() {
+    const otp = document.getElementById("otpInput").value.trim();
+
+    const result = document.getElementById("otpResult");
+
+    if (!otp) {
+      result.innerHTML = "Enter OTP";
+
+      result.style.color = "#ef4444";
+
+      return;
+    }
+
+    fetch(`/verify-otp/?email=${userEmail}&otp=${otp}`)
+      .then((res) => res.json())
+
+      .then((data) => {
+        console.log(data);
+
+        if (data.status === "success" || data.verified === true) {
+          result.innerHTML = "OTP Verified ✅";
+
+          result.style.color = "#22c55e";
+
+          const emailInput = document.querySelector("input[name='email']");
+
+          if (emailInput) {
+            emailInput.style.border = "1px solid #22c55e";
+          }
+
+          const badge = document.getElementById("email-status");
+
+          if (badge) {
+            badge.style.display = "block";
+          }
+
+          otpSent = true;
+
+          setTimeout(() => {
+            document.getElementById("otpPopup").style.display = "none";
+          }, 800);
+        } else {
+          result.innerHTML = data.message || "Wrong OTP ❌";
+
+          result.style.color = "#ef4444";
+
+          document.getElementById("resendBtn").style.display = "block";
+        }
+      })
+
+      .catch((err) => {
+        console.log(err);
+
+        result.innerHTML = "Server Error";
+
+        result.style.color = "#ef4444";
+      });
+  }
+
+  function resendOTP() {
+    if (!userEmail) return;
+
+    document.getElementById("otpResult").innerHTML = "Sending OTP...";
+    document.getElementById("otpResult").style.color = "#cbd5e1";
+
+    fetch(`/send-otp/?email=${userEmail}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "success") {
+          document.getElementById("otpResult").innerHTML = "New OTP Sent ✅";
+          document.getElementById("otpResult").style.color = "#22c55e";
+          document.getElementById("resendBtn").style.display = "none";
+        } else {
+          document.getElementById("otpResult").innerHTML =
+            "Failed to resend ❌";
+          document.getElementById("otpResult").style.color = "#ef4444";
+        }
+      });
+  }
+</script>
+
+{% endblock %}

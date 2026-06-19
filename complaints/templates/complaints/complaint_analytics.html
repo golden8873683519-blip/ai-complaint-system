@@ -1,0 +1,468 @@
+{% extends 'complaints/base.html' %} {% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+  /* =========================
+GLOBAL
+========================= */
+  body {
+    background: #070b14;
+    color: #e5e7eb;
+    font-family: Inter, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ANIMATION BG */
+  body::before {
+    content: "";
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, #3b82f640, transparent 70%);
+    top: -200px;
+    left: -200px;
+    animation: float1 10s infinite ease-in-out;
+    z-index: -1;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #10b98130, transparent 70%);
+    bottom: -200px;
+    right: -200px;
+    animation: float2 12s infinite ease-in-out;
+    z-index: -1;
+  }
+
+  @keyframes float1 {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(30px);
+    }
+  }
+
+  @keyframes float2 {
+    0%,
+    100% {
+      transform: translateX(0px);
+    }
+    50% {
+      transform: translateX(-30px);
+    }
+  }
+
+  /* =========================
+CONTAINER
+========================= */
+  .analytics {
+    padding: 30px;
+  }
+
+  /* TITLE */
+  .title {
+    font-size: 42px;
+    font-weight: 900;
+    background: linear-gradient(90deg, #60a5fa, #34d399);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeIn 1s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 1000px) {
+    .grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* CARD */
+  .cardx {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px);
+    border-radius: 18px;
+    padding: 18px;
+    transition: 0.4s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease-in-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .cardx:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: #3b82f6;
+  }
+
+  /* GLOW EFFECT */
+  .cardx::before {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #3b82f620, transparent 70%);
+    top: -80px;
+    right: -80px;
+  }
+
+  /* BIG NUMBER */
+  .big {
+    font-size: 34px;
+    font-weight: 900;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* AI BOX */
+  .ai-box {
+    margin-top: 25px;
+    padding: 22px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #1d4ed8, #06b6d4);
+    color: white;
+    font-weight: 600;
+    animation: glow 3s infinite;
+  }
+
+  @keyframes glow {
+    0% {
+      box-shadow: 0 0 10px #3b82f6;
+    }
+    50% {
+      box-shadow: 0 0 25px #3b82f6;
+    }
+    100% {
+      box-shadow: 0 0 10px #3b82f6;
+    }
+  }
+
+  /* AI STATUS */
+  .ai-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    background: #34d399;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* CHART GRID */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 25px;
+  }
+
+  @media (max-width: 900px) {
+    .chart-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  canvas {
+    width: 100% !important;
+    height: 300px !important;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .metrics div {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .chart-card {
+    min-height: 420px;
+  }
+
+  .full-width {
+    grid-column: span 2;
+  }
+
+  .warning {
+    color: #f59e0b;
+  }
+
+  .primary {
+    color: #3b82f6;
+  }
+
+  .success {
+    color: #10b981;
+  }
+
+  @media (max-width: 900px) {
+    .full-width {
+      grid-column: span 1;
+    }
+
+    .metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="analytics">
+  <!-- TITLE -->
+  <div class="title">🚀 AI Control Center Dashboard</div>
+
+  <!-- ================= KPI ================= -->
+  <div class="grid">
+    <div class="cardx">
+      <div>Total Complaints</div>
+      <div class="big">{{ total_complaints }}</div>
+    </div>
+
+    <div class="cardx">
+      <div>Pending</div>
+      <div class="big" style="color: #fbbf24">{{ pending }}</div>
+    </div>
+
+    <div class="cardx">
+      <div>In Progress</div>
+      <div class="big" style="color: #60a5fa">{{ in_progress }}</div>
+    </div>
+
+    <div class="cardx">
+      <div>Resolved</div>
+      <div class="big" style="color: #34d399">{{ resolved }}</div>
+    </div>
+  </div>
+
+  <!-- ================= AI BOX ================= -->
+  <div class="ai-box">
+    <h3>🧠 AI Insights</h3>
+
+    {% if sla_risk > 30 %}
+    <p>⚠ High SLA violation risk detected.</p>
+    {% elif pending_rate > 50 %}
+    <p>⚠ Too many pending complaints.</p>
+    {% elif growth > 20 %}
+    <p>📈 Complaint growth increasing rapidly.</p>
+    {% else %}
+    <p>✅ System operating normally.</p>
+    {% endif %}
+
+    <div class="metrics">
+      <div>
+        <strong>Health Score</strong><br />
+        {{ health_score }}%
+      </div>
+
+      <div>
+        <strong>SLA Risk</strong><br />
+        {{ sla_risk }}%
+      </div>
+
+      <div>
+        <strong>Growth</strong><br />
+        {{ growth }}%
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CHARTS ================= -->
+  <div class="chart-grid">
+    <div class="cardx chart-card">
+      <h4>Status Distribution</h4>
+      <canvas id="statusChart"></canvas>
+    </div>
+
+    <div class="cardx chart-card">
+      <h4>Department Complaints</h4>
+      <canvas id="departmentChart"></canvas>
+    </div>
+
+    <div class="cardx chart-card full-width">
+      <h4>Department Performance</h4>
+      <canvas id="performanceChart"></canvas>
+    </div>
+  </div>
+  <!-- ================= CHART JS ================= -->
+  <script>
+
+    new Chart(document.getElementById("statusChart"), {
+
+        type: "doughnut",
+
+        data: {
+
+            labels: ["Pending","In Progress","Resolved"],
+
+            datasets: [{
+                data: [
+                    {{ pending }},
+                    {{ in_progress }},
+                    {{ resolved }}
+                ],
+
+                backgroundColor: [
+                    "#f59e0b",
+                    "#3b82f6",
+                    "#10b981"
+                ]
+            }]
+        }
+    });
+
+
+    new Chart(document.getElementById("departmentChart"), {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                {% for dept in department_data %}
+                "{{ dept.department__name }}",
+                {% endfor %}
+            ],
+
+            datasets: [{
+                label: "Complaints",
+
+                data: [
+                    {% for dept in department_data %}
+                    {{ dept.total }},
+                    {% endfor %}
+                ],
+
+                backgroundColor: "#6366f1"
+            }]
+        }
+    });
+
+
+    new Chart(document.getElementById("performanceChart"), {
+
+        type: "bar",
+
+        data: {
+
+            labels: [
+                {% for d in performance_data %}
+                "{{ d.name }}",
+                {% endfor %}
+            ],
+
+            datasets: [{
+
+                label: "Efficiency %",
+
+                data: [
+                    {% for d in performance_data %}
+                    {{ d.performance }},
+                    {% endfor %}
+                ],
+
+                backgroundColor: "#10b981"
+            }]
+        },
+
+        options: {
+
+            indexAxis: "y",
+
+            scales: {
+                x: {
+                    max: 100
+                }
+            }
+        }
+    });
+
+
+    setInterval(() => {
+
+        fetch("/analytics-api/")
+        .then(response => response.json())
+        .then(data => {
+
+            document.getElementById("total").innerText =
+                data.total;
+
+            document.getElementById("pending").innerText =
+                data.pending;
+
+            document.getElementById("in_progress").innerText =
+                data.in_progress;
+
+            document.getElementById("resolved").innerText =
+                data.resolved;
+        });
+
+    }, 5000);
+  </script>
+  {% endblock %}
+</div>

@@ -1,0 +1,21 @@
+{% extends 'complaints/base.html' %}
+
+{% block content %}
+
+<div class="container mt-5">
+
+    <div class="card p-4 shadow">
+
+        <h2>User Profile</h2>
+
+        <hr>
+
+        <p><b>Name:</b> {{ user.username }}</p>
+        <p><b>Email:</b> {{ user.email }}</p>
+        <p><b>Status:</b> Active</p>
+
+    </div>
+
+</div>
+
+{% endblock %}
