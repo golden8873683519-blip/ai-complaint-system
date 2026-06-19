@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-3-@#o6d$iibbj+=jqb14rs)g26mxj28qx*r+_*8bj28mp@&-lk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # Application definition
@@ -44,12 +45,14 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'college_complaint_system.urls'
@@ -139,6 +142,6 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'devaryan129@gmail.com'
 
-EMAIL_HOST_PASSWORD = 'kpff omnf qlxh acbn'
+EMAIL_HOST_PASSWORD = 'jhun sazv kxmz gakd'
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
